@@ -41,8 +41,8 @@ def combine(pn_entry, sc_entry, aligner):
 
     can_be_merged, mask, alignment, warning = can_be_directly_merged(aligner,
                                                             pn_entry["primary"],
-                                                            # sc_entry,
-                                                            sc_entry["seq"],
+                                                            sc_entry,
+                                                            # sc_entry["seq"],
                                                             pn_entry["mask"])
     new_entry = {}
 
@@ -91,9 +91,9 @@ def combine_datasets(proteinnet_out, sc_data, training_set):
     del d
 
     # For debugging errors
-    # error_file = "/Users/jonathanking/Downloads/errorssidechain/COMBINED.txt"
-    # with open(error_file, "r") as f:
-    #     error_ids = f.read().splitlines(keepends=False)
+    error_file = "/Users/jonathanking/Downloads/errorssidechain/COMBINED_ERRORS.txt"
+    with open(error_file, "r") as f:
+        error_ids = f.read().splitlines(keepends=False)
 
     errors = {"failed": [],
               "single alignment, mask mismatch": [],
@@ -102,14 +102,14 @@ def combine_datasets(proteinnet_out, sc_data, training_set):
               "multiple alignments, found matching mask": [],
               "multiple alignments, found matching mask, many alignments": []}
 
-    aligner = init_aligner()
-    # for pnid in error_ids:
-    with Pool(cpu_count()) as p:
-        tuples = (get_tuple(pn_data, sc_data, pnid) for pnid in sc_data.keys())
-        results_warnings = list(tqdm(p.imap(combine_wrapper, tuples), total=len(sc_data.keys()), dynamic_ncols=True))
+    # with Pool(cpu_count()) as p:
+    #     tuples = (get_tuple(pn_data, sc_data, pnid) for pnid in error_ids)
+    #     results_warnings = list(tqdm(p.imap(combine_wrapper, tuples), total=len(error_ids), dynamic_ncols=True))
 
-    # for pnid in tqdm(sc_data.keys(), dynamic_ncols=True):
-    for (combined_result, warning), pnid in zip(results_warnings, sc_data.keys()):
+    aligner = init_aligner()
+    for pnid in tqdm(error_ids, dynamic_ncols=True):
+    # for (combined_result, warning), pnid in zip(results_warnings, sc_data.keys()):
+        combined_result, warning = combine(pn_data[pnid], sc_data[pnid], aligner)
         if combined_result:
             pn_data[pnid] = combined_result
         else:
@@ -156,14 +156,14 @@ def main():
                                  args.training_set)
 
     # Using the ProteinNet IDs as a guide, download the relevant sidechain data
-    sc_data, sc_filename = download_sidechain_data(pnids, args.sidechainnet_out,
-                                                   args.casp_version,
-                                                   args.training_set,
-                                                   args.limit,
-                                                   args.proteinnet_in)
+    # sc_data, sc_filename = download_sidechain_data(pnids, args.sidechainnet_out,
+    #                                                args.casp_version,
+    #                                                args.training_set,
+    #                                                args.limit,
+    #                                                args.proteinnet_in)
 
     # For debugging errors
-    # sc_data = load_data("../data/sidechainnet/seq-only_casp12_100.pt")
+    sc_data = load_data("../data/sidechainnet/seq-only_casp12_100.pt")
 
     # Finally, unify the sidechain data with ProteinNet
     sidechainnet = combine_datasets(args.proteinnet_out, sc_data,
