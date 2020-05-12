@@ -52,8 +52,8 @@ def combine(pn_entry, sc_entry, aligner):
         new_entry["evo"] = pn_entry["evolutionary"]
 
         # We may need to add padding where specified by the mask
-        new_entry["ang"] = expand_data_with_mask(sc_entry["ang"], mask)
-        new_entry["crd"] = expand_data_with_mask(sc_entry["crd"], mask)
+        # new_entry["ang"] = expand_data_with_mask(sc_entry["ang"], mask)
+        # new_entry["crd"] = expand_data_with_mask(sc_entry["crd"], mask)
         new_entry["msk"] = mask
 
         l = len(pn_entry["primary"])
@@ -91,7 +91,7 @@ def combine_datasets(proteinnet_out, sc_data, training_set):
     del d
 
     # For debugging errors
-    error_file = "/Users/jonathanking/Downloads/errorssidechain/COMBINED_ERRORS.txt"
+    error_file = "/Users/jonathanking/Downloads/errorssidechain/COMBINED_1ALN_MISMATCH.txt"
     with open(error_file, "r") as f:
         error_ids = f.read().splitlines(keepends=False)
 
