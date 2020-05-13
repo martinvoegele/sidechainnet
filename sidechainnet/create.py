@@ -39,10 +39,10 @@ def combine(pn_entry, sc_entry, aligner, pnid):
         print("WARNING: secondary structure information is not yet supported. "
               "As of May 2020, it is not included in ProteinNet.")
 
-    can_be_merged, mask, alignment, warning, seq = can_be_directly_merged(aligner,
+    can_be_merged, mask, alignment, warning = can_be_directly_merged(aligner,
                                                             pn_entry["primary"],
-                                                            # sc_entry,
-                                                            sc_entry["seq"],
+                                                            sc_entry,
+                                                            # sc_entry["seq"],
                                                             pn_entry["mask"],
                                                                      pnid)
     new_entry = {}
