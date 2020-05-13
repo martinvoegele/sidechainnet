@@ -21,7 +21,7 @@ from sidechainnet.utils.alignment import init_aligner
 from sidechainnet.utils.structure import NUM_PREDICTED_COORDS
 
 
-def combine(pn_entry, sc_entry, aligner):
+def combine(pn_entry, sc_entry, aligner, pnid):
     """ Supplements one entry in ProteinNet with sidechain information.
 
     Args:
@@ -43,7 +43,8 @@ def combine(pn_entry, sc_entry, aligner):
                                                             pn_entry["primary"],
                                                             sc_entry,
                                                             # sc_entry["seq"],
-                                                            pn_entry["mask"])
+                                                            pn_entry["mask"],
+                                                                     pnid)
     new_entry = {}
 
     if alignment:
@@ -109,7 +110,7 @@ def combine_datasets(proteinnet_out, sc_data, training_set):
     aligner = init_aligner()
     for pnid in tqdm(error_ids, dynamic_ncols=True):
     # for (combined_result, warning), pnid in zip(results_warnings, sc_data.keys()):
-        combined_result, warning = combine(pn_data[pnid], sc_data[pnid], aligner)
+        combined_result, warning = combine(pn_data[pnid], sc_data[pnid], aligner, pnid)
         if combined_result:
             pn_data[pnid] = combined_result
         else:
