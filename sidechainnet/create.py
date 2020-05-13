@@ -49,7 +49,7 @@ def combine(pn_entry, sc_entry, aligner, pnid):
 
     if alignment:
         # Create new SidechainNet entry containing all information
-        new_entry["seq"] = seq
+        new_entry["seq"] = pn_entry["primary"]
         new_entry["evo"] = pn_entry["evolutionary"]
 
         # We may need to add padding where specified by the mask
@@ -57,7 +57,7 @@ def combine(pn_entry, sc_entry, aligner, pnid):
         # new_entry["crd"] = expand_data_with_mask(sc_entry["crd"], mask)
         new_entry["msk"] = mask
 
-        l = len(seq)
+        l = len(pn_entry["primary"])
         for k, v in new_entry.items():
             if k == "crd":
                 assert len(v) // NUM_PREDICTED_COORDS == l, f"{k} does not have correct length {l} (is {len(v)//NUM_PREDICTED_COORDS})."
@@ -92,7 +92,7 @@ def combine_datasets(proteinnet_out, sc_data, training_set):
     del d
 
     # For debugging errors
-    error_file = "/Users/jonathanking/Downloads/errorssidechain/COMBINED_1ALN_MISMATCH.txt"
+    error_file = "/Users/jonathanking/Downloads/errorssidechain/COMBINED_ERRORS.txt"
     with open(error_file, "r") as f:
         error_ids = f.read().splitlines(keepends=False)
 
