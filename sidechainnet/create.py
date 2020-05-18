@@ -60,6 +60,7 @@ def combine(pn_entry, sc_entry, aligner, pnid):
         l = len(pn_entry["primary"])
         for k, v in new_entry.items():
             if k == "crd":
+                if len(v) // NUM_PREDICTED_COORDS != l: return {}, "failed"
                 assert len(v) // NUM_PREDICTED_COORDS == l, f"{k} does not have correct length {l} (is {len(v)//NUM_PREDICTED_COORDS})."
             else:
                 if len(v) != l: return {}, "failed"
@@ -111,10 +112,6 @@ def combine_datasets(proteinnet_out, sc_data, training_set):
               "multiple alignments, found matching mask, many alignments, mismatch used in alignment": [],
               }
 
-    # with Pool(cpu_count()) as p:
-    #     tuples = (get_tuple(pn_data, sc_data, pnid) for pnid in error_ids)
-    #     results_warnings = list(tqdm(p.imap(combine_wrapper, tuples), total=len(error_ids), dynamic_ncols=True))
-
     aligner = init_aligner()
     for pnid in tqdm(error_ids, dynamic_ncols=True):
     # for (combined_result, warning), pnid in zip(results_warnings, sc_data.keys()):
@@ -164,12 +161,12 @@ def combine_datasets(proteinnet_out, sc_data, training_set):
     return pn_data
 
 def get_tuple(pndata, scdata, pnid):
-    return pndata[pnid], scdata[pnid]
+    return pndata[pnid], scdata[pnid], pnid
 
-def combine_wrapper(pndata_scdata):
-    pn_data, sc_data = pndata_scdata
+def combine_wrapper(pndata_scdata_pnid):
+    pn_data, sc_data, pnid = pndata_scdata_pnid
     aligner = init_aligner()
-    return combine(pn_data, sc_data, aligner)
+    return combine(pn_data, sc_data, aligner, pnid)
 
 
 def main():
