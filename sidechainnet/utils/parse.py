@@ -262,10 +262,36 @@ def get_chain_from_astral_id(astral_id, d):
     if resnums != "":
         if resnums[0] == "-":
             # Ranges with negative numbers must be escaped with ` character
-            a = a.select(f"resnum `{resnums[0] + resnums[1:].replace('-', ' to ')}`")
+            resnum_str = f"resnum `{resnums[0] + resnums[1:].replace('-', ' to ')}`"
         else:
-            a = a.select(f"resnum {resnums.replace('-', ' to ')}")
+            resnum_str = f"resnum {resnums.replace('-', ' to ')}"
+        # TODO: modify this behavior when ProDy issue #1197 is fixed
+        a = a.select(fix_insertion_codes(resnum_str))
     return a
+
+
+def fix_insertion_codes(resnum_selection_str):
+    """Bypasses an issue with ProDy in which ranges cannot specify insertion codes.
+
+    For example, 'resnum 4P to 100P' only selects residues 4 and 100 with insertion
+    code P, rather than selecting residues 4 through 100.
+    https://github.com/prody/ProDy/issues/1197
+
+    Args:
+        resnum_selection_str: A string used for prody.AtomGroup.select().
+
+    Returns:
+        A potentially modified input that does not have insertion codes and ranges.
+    """
+    if " to " in resnum_selection_str:
+        _to, _from = resnum_selection_str.split(" to ")
+        # If there is an insertion code (letter) appended to resnum, remove it
+        if _to[-1].isalpha():
+            _to = _to[:-1]
+        if _from[-1].isalpha():
+            _from = _from[:-1]
+        resnum_selection_str = f"{_to} to {_from}"
+    return resnum_selection_str
 
 
 # Defines a list of ASTRAL IDs that may have been parsed incorrectly in ProteinNet.
@@ -279,7 +305,7 @@ FULL_ASTRAL_IDS_INCORRECTLY_PARSED = [
     '2RCY_d2rcye1', '2V83_d2v83c2', '2WLJ_d2wljb1', '2Z9I_d2z9ic1', '3EQV_d3eqvb1',
     '3GFT_d3gftf1', '3GLJ_d3glja1', '3OMZ_d3omzc2', '3OYT_d3oytb2', '3PUW_d3puwb2',
     '3R3L_d3r3lc2', '3UGX_d3ugxd2', '4KLY_d4klye1', '4L4J_d4l4jb1', '4M9A_d4m9ad1',
-    '4OCR_d4ocrl2', '5CTB_d5ctbc2'
+    '4OCR_d4ocrl2', '5CTB_d5ctbc2', '1TOC_d1tocu1'
 ]
 
 ASTRAL_IDS_INCORRECTLY_PARSED = [
