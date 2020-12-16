@@ -222,7 +222,7 @@ def load(casp_version=12,
                 >>> dataloaders = scn.load(casp_version=12, with_pytorch="dataloaders")
                 >>> dataloaders.keys()
                 ['train', 'train_eval', 'valid-10', ..., 'valid-90', 'test']
-                >>> for (protein_id, model_input, true_angles,
+                >>> for (protein_id, protein_seqs, model_input, true_angles,
                         true_coords) in dataloaders['train']:
                 ....    predicted_angles = model(model_input)
                 ....    predicted_coords = angles_to_coordinates(predicted_angles)
@@ -353,5 +353,9 @@ BOXURLS = {
     "sidechainnet_casp7_95.pkl":
         "",
     "sidechainnet_casp7_100.pkl":
-        ""
+        "",
+
+    # Other
+    "debug.pkl":
+        "https://pitt.box.com/shared/static/t1t9ahdhgv5h8937rdani9ihp34gs7bu.pkl"
 }
