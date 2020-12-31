@@ -1,0 +1,19 @@
+name: sidechainnet 
+channels:
+  - pytorch
+dependencies:
+    # Base depends
+  - python=3.8
+  - pip
+  - numpy
+  - scipy
+  - pandas
+  - tqdm
+  - cudatoolkit=10.1
+  - pytorch=1.7
+
+  # Pip-only installs
+  - pip:
+    - codecov
+    - ProDy
+
