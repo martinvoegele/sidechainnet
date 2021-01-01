@@ -20,14 +20,14 @@ CASP_VER=12
 PDB_DIR='/oak/stanford/groups/rondror/projects/gert/data/sidechainnet_pdb'
 OUT_DIR='/oak/stanford/groups/rondror/projects/gert/data/sidechainnet_lmdb'
 
-for THINNING in 30; do 
+for THINNING in 30 70 90; do 
 
 	DATASET=sidechainnet_casp${CASP_VER}_${THINNING}
 	echo "Processing $DATASET"
 
 	# Convert PDB+CSV files to LMDB dataset
-#	python create_lmdb.py -i $PDB_DIR -o $OUT_DIR \
-#	                      -t $THINNING -v $CASP_VER
+	python create_lmdb.py -i $PDB_DIR -o $OUT_DIR \
+	                      -t $THINNING -v $CASP_VER
 	# Convert PDB+CSV files to LMDB dataset with splits
         python create_lmdb.py -i $PDB_DIR -o $OUT_DIR \
                               -t $THINNING -v $CASP_VER \
